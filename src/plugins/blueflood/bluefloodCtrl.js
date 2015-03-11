@@ -33,6 +33,11 @@ function (angular, _, kbn) {
 			$scope.panel.targets.push(clone);
 		};
 
+		$scope.removeDataQuery = function(target) {
+			$scope.functions = _.without($scope.functions, target);
+			$scope.targetBlur();
+		};
+
 		$scope.suggestMetrics = function(query, callback) {
 			$scope.datasource.performSuggestMetrics(query).then(callback);
 		};
