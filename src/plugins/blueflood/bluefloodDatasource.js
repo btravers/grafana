@@ -95,11 +95,11 @@ function (angular, _, kbn) {
 		/// Suggest tenant and metric
 		/////////////////////////////////////////////////////////////////////////
 
-		GraphiteDatasource.prototype.performSuggestMetrics = function(query) {
+		BluefloodDatasource.prototype.performSuggestMetrics = function(query) {
 			return [];
 		};
 
-		GraphiteDatasource.prototype.performSuggestTenants = function(query) {
+		BluefloodDatasource.prototype.performSuggestTenants = function(query) {
 			return [];
 		};
 
