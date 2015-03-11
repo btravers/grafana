@@ -29,12 +29,11 @@ function (angular, _, kbn) {
 			var from = convertToBluefloodTime(options.range.from);
 			var to = convertToBluefloodTime(options.range.to);
 			var targets = options.targets;
-			var select = options.agregators;
 
 			var promises = [];
 
 			angular.forEach(targets, function (target) {
-				if (!(!target.tenant || !target.metric || target.hide)) {
+				if (target.tenant && target.metric && !target.hide) {
 					var options = {
 						method: 'GET',
 						url: '/v2.0/' + target.tenant + '/views/' + target.metric,
@@ -46,8 +45,8 @@ function (angular, _, kbn) {
 					}
 					options.url = this.url + options.url;
 
-					if (agregators.length != 0) {
-						options.select = select.join();
+					if (target.aggregators && target.aggregators.length != 0) {
+						options.select = target.aggregators.join();
 					}
 
 					promises.push($http(options).then(handleBluefloodQueryResponse));
@@ -57,7 +56,7 @@ function (angular, _, kbn) {
 			return $q.all(promises).then(function (responses) {
 				var series = [];
 				for (var i = 0; i < targets.length; i++) {
-					if (!(!targets[i].tenant || !targets[i].metric || targets[i].hide)) {
+					if (targets[i].tenant && targets[i].metric && !targets[i].hide) {
 						var target = targets[i].tenant + ':' + targets[i].metric;
 						series.push({ target: target, datapoints: responses[i] });
 					}
