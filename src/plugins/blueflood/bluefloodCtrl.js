@@ -12,7 +12,20 @@ function (angular, _, kbn) {
 
 		$scope.init = function() {
 			$scope.target.errors = validateTarget($scope.target);
-			$scope.aggregators = ['average', 'min', 'max', 'numPoints'];
+			$scope.aggregators = [
+				{id: 'average', label: 'average'}, 
+				{id: 'min', label: 'max'}, 
+				{id: 'max', label: 'max'}, 
+				{id: 'numPoints', label: 'numPoints'}
+			];
+			$scope.aggregatorsettings = {
+				smartButtonMaxItems: $scope.aggregators.length,
+				smartButtonTextConverter: function(itemText, originalItem) {
+			        return itemText;
+			    },
+			    scrollableHeight: '200px',
+    			scrollable: true
+			};
 						
 			$scope.$on('typeahead-updated', function() {
 				$timeout($scope.targetBlur);

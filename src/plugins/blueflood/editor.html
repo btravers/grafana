@@ -1,3 +1,6 @@
+
+<script src="isteven-multi-select.js"></script>
+
 <div class="editor-row" style="margin-top: 10px;">
 
 	<div ng-repeat="target in panel.targets"
@@ -43,113 +46,55 @@
 			</ul>
 
 			<ul class="tight-form-list" role="menu">
-				<li class="tight-form-item" style="width: 86px">
-					Tenant
-				</li>
-				<li>
+
+				<!-- Tenant -->
+
+				<li role="menuitem">
 					<input type="text"
-						class="input-large tight-form-input"
+						class="grafana-target-text-input input-medium"
+						spellcheck="false"
+						style="display:none"
 						ng-model="target.tenant"
-						spellcheck='false'
-						placeholder="tenant name"
-						data-min-length=0 data-items=100
+						placeholder="select tenant"
 						ng-model-onblur
-						ng-blur="targetBlur()">
-					<a bs-tooltip="target.errors.metric"
-						style="color: rgb(229, 189, 28)"
-						ng-show="target.errors.metric">
-						<i class="fa fa-warning"></i>
-					</a>
+						ng-blur="targetBlur()"/>
 				</li>
 
-				<li class="tight-form-item" style="width: 86px">
-					Metric
-				</li>
-				<li>
+
+				<!-- Metric -->
+
+				<li role="menuitem">
 					<input type="text"
-						class="input-large tight-form-input"
+						class="grafana-target-text-input input-medium"
+						spellcheck="false"
+						style="display:none"
 						ng-model="target.metric"
-						spellcheck='false'
-						placeholder="metric name"
-						data-min-length=0 data-items=100
+						placeholder="select metric"
 						ng-model-onblur
-						ng-blur="targetBlur()">
-					<a bs-tooltip="target.errors.metric"
-						style="color: rgb(229, 189, 28)"
-						ng-show="target.errors.metric">
-						<i class="fa fa-warning"></i>
-					</a>
+						ng-blur="targetBlur()"/>
 				</li>
 
-				<li class="tight-form-item">
-					Aggregator
-				</li>
+				
+				<!-- Aggregation -->
+				
+
+				<div ng-dropdown-multiselect="" options="aggregators" selected-model="target.aggregator" extra-settings="aggregatorsettings"></div>
+
+				<!--
 				<li>
 					<input type="checkbox" 
 						ng-model="target.aggregator"
-						class="tight-form-input input-small"
 						ng-options="agg for agg in aggregators"
+						ng-model-onblur
 						ng-change="targetBlur()">
 					</input>
-					<a bs-tooltip="target.errors.aggregators"
-						style="color: rgb(229, 189, 28)"
-						ng-show="target.errors.aggregator">
-						<i class="fa fa-warning"></i>
-					</a>
 				</li>
+				-->
 			</ul>
 		</div>
 
 		<div class="clearfix"></div>
-		</div>
 
-		<div class="tight-form">
-			<ul class="tight-form-list" role="menu">
-				<li class="tight-form-item">
-					<i class="fa fa-eye invisible"></i>
-				</li>
-				<li class="tight-form-item" style="width: 86px">
-					Rate&nbsp;
-					<input class="cr1" id="target.shouldComputeRate" type="checkbox"
-						ng-model="target.shouldComputeRate" ng-checked="target.shouldComputeRate" ng-change="targetBlur()">
-					<label for="target.shouldComputeRate" class="cr1"></label>
-				</li>
-				<li class="tight-form-item" ng-hide="!target.shouldComputeRate">
-					Counter&nbsp;
-					<input class="cr1" id="target.isCounter" type="checkbox"
-						ng-model="target.isCounter" ng-checked="target.isCounter" ng-change="targetBlur()">
-					<label for="target.isCounter" class="cr1"></label>
-				</li>
-				<li class="tight-form-item" ng-hide="!target.isCounter">
-					Counter Max:
-				</li>
-				<li ng-hide="!target.isCounter">
-					<input type="text"
-						class="tight-form-input input-small"
-						ng-disabled="!target.shouldComputeRate"
-						ng-model="target.counterMax"
-						spellcheck='false'
-						placeholder="max value"
-						ng-model-onblur
-						ng-blur="targetBlur()"
-						/>
-				</li>
-				<li class="tight-form-item" ng-hide="!target.isCounter">
-					Reset Value:
-				</li>
-				<li ng-hide="!target.isCounter">
-					<input type="text"
-						class="tight-form-input input-small"
-						ng-disabled="!target.shouldComputeRate"
-						ng-model="target.counterResetValue"
-						spellcheck='false'
-						placeholder="reset value"
-						ng-model-onblur
-						ng-blur="targetBlur()"
-						/>
-				</li>
-			</ul>
-			<div class="clearfix"></div>
 		</div>
 	</div>
 </div>
