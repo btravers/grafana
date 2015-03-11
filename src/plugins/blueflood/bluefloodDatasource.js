@@ -57,7 +57,7 @@ function (angular, _, kbn) {
 			return $q.all(promises).then(function (responses) {
 				var series = [];
 				for (var i = 0; i < targets.length; i++) {
-					if (!(!target[i].tenant || !target[i].metric || target[i].hide)) {
+					if (!(!targets[i].tenant || !targets[i].metric || targets[i].hide)) {
 						var target = targets[i].tenant + ':' + targets[i].metric;
 						series.push({ target: target, datapoints: responses[i] });
 					}
