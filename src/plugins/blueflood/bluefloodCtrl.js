@@ -1,12 +1,15 @@
 define([
 	'angular',
 	'lodash',
-	'kbn'
+	'kbn',
+	'./angularjs-dropdown-multiselect'
 ],
 function (angular, _, kbn) {
 	'use strict';
 
 	var module = angular.module('grafana.controllers');
+	var metricList = null;
+	var tenantList = null;
 
 	module.controller('BluefloodCtrl', function($scope, $timeout) {
 
@@ -26,6 +29,7 @@ function (angular, _, kbn) {
 			    scrollableHeight: '200px',
     			scrollable: true
 			};
+			$scope.aggregatortext = {buttonDefaultText: 'Functions'};
 						
 			$scope.$on('typeahead-updated', function() {
 				$timeout($scope.targetBlur);
@@ -47,16 +51,47 @@ function (angular, _, kbn) {
 		};
 
 		$scope.removeDataQuery = function(target) {
-			$scope.functions = _.without($scope.functions, target);
+			var rg = $scope.panel.targets.indexOf(target);
+			if (rg > -1) {
+				$scope.panel.targets.splice(rg, 1);
+			}
 			$scope.targetBlur();
 		};
 
-		$scope.suggestMetrics = function(query, callback) {
-			$scope.datasource.performSuggestMetrics(query).then(callback);
+		$scope.updateMetricList = function(query) {
+			$scope.metricListLoading = true;
+			metricList = [];
+			$scope.datasource.performSuggestMetrics(query).then(function(series) {
+				metricList = series;
+				$scope.metricListLoading = false;
+				return metricList;
+			});
 		};
 
-		$scope.suggestTargets = function(query, callback) {
-			$scope.datasource.performSuggestTargets(query).then(callback);
+		$scope.suggestMetrics = function(query, callback) {
+			if (!metricList) {
+				$scope.updateMetricList(query);
+			} else {
+				callback(metricList);
+			}
+		};
+
+		$scope.updateTenantList = function(query) {
+			$scope.tenantListLoading = true;
+			tenantList = [];
+			$scope.datasource.performSuggestTenants(query).then(function(series) {
+				tenantList = series;
+				$scope.tenantListLoading = false;
+				return tenantList;
+			});
+		};
+
+		$scope.suggestTenant = function(query, callback) {
+			if (!tenantList) {
+				$scope.updateTenantList(query);
+			} else {
+				callback(tenantList);
+			}
 		};
 
 		function validateTarget(target) {

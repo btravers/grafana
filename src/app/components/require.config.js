@@ -10,6 +10,7 @@ require.config({
     settings:                 'components/settings',
     kbn:                      'components/kbn',
     store:                    'components/store',
+    'angularjs-dropdown-multiselect': 'components/angularjs-dropdown-multiselect',
 
     css:                      '../vendor/require/css',
     text:                     '../vendor/require/text',

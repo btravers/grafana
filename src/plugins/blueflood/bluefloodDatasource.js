@@ -95,11 +95,17 @@ function (angular, _, kbn) {
 		/////////////////////////////////////////////////////////////////////////
 
 		BluefloodDatasource.prototype.performSuggestMetrics = function(query) {
-			return [];
+			var promise = new Promise(function(resolve, reject) {
+				resolve([]);
+			});
+			return promise;
 		};
 
 		BluefloodDatasource.prototype.performSuggestTenants = function(query) {
-			return [];
+			var promise = new Promise(function(resolve, reject) {
+				resolve([]);
+			});
+			return promise;
 		};
 
 
