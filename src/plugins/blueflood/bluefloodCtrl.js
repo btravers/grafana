@@ -1,8 +1,7 @@
 define([
 	'angular',
 	'lodash',
-	'kbn',
-	'./angularjs-dropdown-multiselect'
+	'kbn'
 ],
 function (angular, _, kbn) {
 	'use strict';
@@ -10,6 +9,7 @@ function (angular, _, kbn) {
 	var module = angular.module('grafana.controllers');
 	var metricList = null;
 	var tenantList = null;
+	var targetLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	module.controller('BluefloodCtrl', function($scope, $timeout) {
 
@@ -30,6 +30,8 @@ function (angular, _, kbn) {
     			scrollable: true
 			};
 			$scope.aggregatortext = {buttonDefaultText: 'Functions'};
+
+			$scope.targetLetters = targetLetters;
 						
 			$scope.$on('typeahead-updated', function() {
 				$timeout($scope.targetBlur);
@@ -48,6 +50,10 @@ function (angular, _, kbn) {
 		$scope.duplicate = function() {
 			var clone = angular.copy($scope.target);
 			$scope.panel.targets.push(clone);
+		};
+
+		$scope.moveMetricQuery = function(fromIndex, toIndex) {
+			_.move($scope.panel.targets, fromIndex, toIndex);
 		};
 
 		$scope.removeDataQuery = function(target) {
