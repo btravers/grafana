@@ -1,9 +1,10 @@
 define([
 	'angular',
 	'lodash',
-	'kbn'
+	'kbn',
+	'./gfunc'
 ],
-function (angular, _, kbn) {
+function (angular, _, kbn, gfunc) {
 	'use strict';
 
 	var module = angular.module('grafana.controllers');
@@ -15,23 +16,10 @@ function (angular, _, kbn) {
 
 		$scope.init = function() {
 			$scope.target.errors = validateTarget($scope.target);
-			$scope.aggregators = [
-				{id: 'average', label: 'average'}, 
-				{id: 'min', label: 'max'}, 
-				{id: 'max', label: 'max'}, 
-				{id: 'numPoints', label: 'numPoints'}
-			];
-			$scope.aggregatorsettings = {
-				smartButtonMaxItems: $scope.aggregators.length,
-				smartButtonTextConverter: function(itemText, originalItem) {
-			        return itemText;
-			    },
-			    scrollableHeight: '200px',
-    			scrollable: true
-			};
-			$scope.aggregatortext = {buttonDefaultText: 'Functions'};
-
+			
 			$scope.targetLetters = targetLetters;
+
+			$scope.functions = [];
 						
 			$scope.$on('typeahead-updated', function() {
 				$timeout($scope.targetBlur);
@@ -100,6 +88,34 @@ function (angular, _, kbn) {
 			}
 		};
 
+		$scope.addFunction = function(funcDef) {
+			var newFunc = gfunc.createFuncInstance(funcDef, { withDefaultParams: true });
+			newFunc.added = true;
+			if (!$scope.target.functions) {
+				$scope.target.functions = [];
+			}
+			$scope.target.functions.push(newFunc);
+			$scope.moveAliasFuncLast();
+			if (!$scope.target.tenant || !$scope.target.metric) {
+				$scope.target.hideDataField = true;
+			}
+			if (!newFunc.params.length && newFunc.added) {
+				$scope.targetBlur();
+			}
+		};
+
+		$scope.moveAliasFuncLast = function() {
+			var aliasFunc = _.find($scope.target.functions, function(func) {
+				return func.def.name === 'alias' ||
+					func.def.name === 'aliasByNode' ||
+					func.def.name === 'aliasByMetric';
+			});
+			if (aliasFunc) {
+				$scope.target.functions = _.without($scope.target.functions, aliasFunc);
+				$scope.target.functions.push(aliasFunc);
+			}
+		};
+
 		function validateTarget(target) {
 			var errs = {};
 
@@ -112,7 +128,7 @@ function (angular, _, kbn) {
 			}
 
 			return errs;
-		}		
+		}	
 
 	});
 });

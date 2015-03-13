@@ -61,10 +61,10 @@
 			<ul class="tight-form-list" role="menu">
 
 				<!-- Tenant -->
-				<li class="tight-form-item">
+				<li class="tight-form-item" ng-hide="target.hideDataField">
 					tenant
 				</li>
-				<li>
+				<li ng-hide="target.hideDataField">
 					<input type="text"
 						class="input-medium tight-form-input"
 						spellcheck="false"
@@ -80,10 +80,10 @@
 
 
 				<!-- Metric -->
-				<li class="tight-form-item">
+				<li class="tight-form-item" ng-hide="target.hideDataField">
 					metric
 				</li>
-				<li>
+				<li ng-hide="target.hideDataField">
 					<input type="text"
 						class="input-medium tight-form-input"
 						spellcheck="false"
@@ -95,8 +95,16 @@
 						<i ng-hide="metricListLoading" class="fa fa-refresh"></i>
 						<i ng-show="metricListLoading" class="fa fa-spinner fa-spin"></i>
 					</a>
+				</li>			
+				
+				<li ng-repeat="func in target.functions">
+					<span blueflood-func-editor class="tight-form-item tight-form-func"></span>
+				</li>
+
+				<li class="dropdown" graphite-add-func>
 				</li>
 			</ul>
+
 			<div class="clearfix"></div>
 		</div>
 	</div>
