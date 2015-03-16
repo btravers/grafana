@@ -71,6 +71,8 @@
 						ng-model="target.tenant"
 						placeholder="select tenant"
 						bs-typeahead="suggestTenants"
+						data-min-length=0
+						data-items=20
 						ng-blur="targetBlur()"/>
 					<a class="tight-form-item" bs-tooltip="'Update the list of tenant names'" ng-click="updateTenantList();">
 						<i ng-hide="tenantListLoading" class="fa fa-refresh"></i>
@@ -90,6 +92,8 @@
 						ng-model="target.metric"
 						placeholder="select metric"
 						bs-typeahead="suggestMetrics"
+						data-min-length=0
+						data-items=20
 						ng-blur="targetBlur()"/>
 					<a class="tight-form-item" bs-tooltip="'Update the list of metric names'" ng-click="updateMetricList();">
 						<i ng-hide="metricListLoading" class="fa fa-refresh"></i>

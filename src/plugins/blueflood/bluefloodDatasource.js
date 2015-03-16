@@ -31,6 +31,7 @@ function (angular, _, kbn) {
 			var from = convertToBluefloodTime(options.range.from);
 			var to = convertToBluefloodTime(options.range.to);
 			var targets = options.targets;
+			var points = options.maxDataPoints;
 
 			var promises = [];
 
@@ -42,16 +43,11 @@ function (angular, _, kbn) {
 						params: {
 							from: from,
 							to: to,
-							resolution: "FULL"
+							points: points
 						}
 					}
 					options.url = this.url + options.url;
 
-/*
-					if (target.aggregators && target.aggregators.length != 0) {
-						options.select = target.aggregators.join();
-					}
-*/
 					promises.push($http(options).then(handleBluefloodQueryResponse));
 				}
 			}, this);
@@ -83,11 +79,11 @@ function (angular, _, kbn) {
 
 			var datapoints = [];
 
-			angular.forEach(result.values, function (value) {
+			angular.forEach(result.data.values, function (value) {
 				var t = value.timestamp;
 				var v = value.average;
-				datapoints.push([v, t]);
-			});
+				this.push([v, t]);
+			}, datapoints);
 
 			return datapoints;
 		}
@@ -98,15 +94,19 @@ function (angular, _, kbn) {
 		/////////////////////////////////////////////////////////////////////////
 
 		BluefloodDatasource.prototype.performSuggestMetrics = function(query) {
+			console.log('performSuggestMetrics');
 			var promise = new Promise(function(resolve, reject) {
-				resolve([]);
+				console.log("Promise");
+				resolve(["Blabla", "Truc"]);
 			});
 			return promise;
 		};
 
 		BluefloodDatasource.prototype.performSuggestTenants = function(query) {
+			console.log('performSuggestTenants');
 			var promise = new Promise(function(resolve, reject) {
-				resolve([]);
+				console.log("Promise");
+				resolve(["Yolo", "Swag"]);
 			});
 			return promise;
 		};
@@ -125,6 +125,21 @@ function (angular, _, kbn) {
 
 			return date.getTime();
 		}
+
+
+		/////////////////////////////////////////////////////////////////////////
+		/// Aggregation
+		/////////////////////////////////////////////////////////////////////////
+
+		BluefloodDatasource.prototype._seriesRefLetters = [
+			'#A', '#B', '#C', '#D',
+			'#E', '#F', '#G', '#H',
+			'#I', '#J', '#K', '#L',
+			'#M', '#N', '#O', '#P',
+			'#Q', '#R', '#S', '#T',
+			'#U', '#V', '#W', '#X',
+			'#Y', '#Z'
+		];
 
 		/////////////////////////////////////////////////////////////////////////
 

@@ -8,19 +8,17 @@ function (angular, _, kbn, gfunc) {
 	'use strict';
 
 	var module = angular.module('grafana.controllers');
+	var targetLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
 	var metricList = null;
 	var tenantList = null;
-	var targetLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	module.controller('BluefloodCtrl', function($scope, $timeout) {
 
 		$scope.init = function() {
 			$scope.target.errors = validateTarget($scope.target);
-			
 			$scope.targetLetters = targetLetters;
-
-			$scope.functions = [];
-						
+	
 			$scope.$on('typeahead-updated', function() {
 				$timeout($scope.targetBlur);
 			});
@@ -53,9 +51,11 @@ function (angular, _, kbn, gfunc) {
 		};
 
 		$scope.updateMetricList = function(query) {
+			console.log('updateMetricList');
 			$scope.metricListLoading = true;
 			metricList = [];
 			$scope.datasource.performSuggestMetrics(query).then(function(series) {
+				console.log("Then promise");
 				metricList = series;
 				$scope.metricListLoading = false;
 				return metricList;
@@ -63,6 +63,7 @@ function (angular, _, kbn, gfunc) {
 		};
 
 		$scope.suggestMetrics = function(query, callback) {
+			console.log('suggestMetrics');
 			if (!metricList) {
 				$scope.updateMetricList(query);
 			} else {
@@ -71,16 +72,19 @@ function (angular, _, kbn, gfunc) {
 		};
 
 		$scope.updateTenantList = function(query) {
+			console.log("updateTenantList");
 			$scope.tenantListLoading = true;
 			tenantList = [];
 			$scope.datasource.performSuggestTenants(query).then(function(series) {
-				tenantList = series;
 				$scope.tenantListLoading = false;
+				console.log("Then promise");
+				tenantList = series;
 				return tenantList;
 			});
 		};
 
 		$scope.suggestTenants = function(query, callback) {
+			console.log('suggestTenants');
 			if (!tenantList) {
 				$scope.updateTenantList(query);
 			} else {
