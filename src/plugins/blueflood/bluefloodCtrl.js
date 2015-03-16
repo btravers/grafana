@@ -80,12 +80,17 @@ function (angular, _, kbn, gfunc) {
 			});
 		};
 
-		$scope.suggestTenant = function(query, callback) {
+		$scope.suggestTenants = function(query, callback) {
 			if (!tenantList) {
 				$scope.updateTenantList(query);
 			} else {
 				callback(tenantList);
 			}
+		};
+
+		$scope.removeFunction = function(func) {
+			$scope.target.functions = _.without($scope.target.functions, func);
+			$scope.targetBlur();
 		};
 
 		$scope.addFunction = function(funcDef) {
@@ -99,6 +104,7 @@ function (angular, _, kbn, gfunc) {
 			if (!$scope.target.tenant || !$scope.target.metric) {
 				$scope.target.hideDataField = true;
 			}
+			
 			if (!newFunc.params.length && newFunc.added) {
 				$scope.targetBlur();
 			}
@@ -107,7 +113,6 @@ function (angular, _, kbn, gfunc) {
 		$scope.moveAliasFuncLast = function() {
 			var aliasFunc = _.find($scope.target.functions, function(func) {
 				return func.def.name === 'alias' ||
-					func.def.name === 'aliasByNode' ||
 					func.def.name === 'aliasByMetric';
 			});
 			if (aliasFunc) {

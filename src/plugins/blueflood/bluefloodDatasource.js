@@ -2,7 +2,9 @@ define([
 	'angular',
 	'lodash',
 	'kbn',
-	'./bluefloodCtrl'
+	'./bluefloodCtrl',
+	'./addBluefloodFunc',
+	'./funcEditor'
 ],
 function (angular, _, kbn) {
 	'use strict';
@@ -45,10 +47,11 @@ function (angular, _, kbn) {
 					}
 					options.url = this.url + options.url;
 
+/*
 					if (target.aggregators && target.aggregators.length != 0) {
 						options.select = target.aggregators.join();
 					}
-
+*/
 					promises.push($http(options).then(handleBluefloodQueryResponse));
 				}
 			}, this);
