@@ -54,10 +54,16 @@ function (angular, _, kbn) {
 
 			return $q.all(promises).then(function (responses) {
 				var series = [];
+				var count = 0;
 				for (var i = 0; i < targets.length; i++) {
-					if (targets[i].tenant && targets[i].metric && !targets[i].hide) {
+					if (!targets[i].tenant || !targets[i].metric) {
 						var target = targets[i].tenant + ':' + targets[i].metric;
-						series.push({ target: target, datapoints: responses[i] });
+						series.push({ target: target, datapoints: [] });
+					} else if (!targets[i].hide) {
+						var target = targets[i].tenant + ':' + targets[i].metric;
+						series.push({ target: target, datapoints: responses[i-count] });
+					} else {
+						count++;
 					}
 				}
 
@@ -94,18 +100,14 @@ function (angular, _, kbn) {
 		/////////////////////////////////////////////////////////////////////////
 
 		BluefloodDatasource.prototype.performSuggestMetrics = function(query) {
-			console.log('performSuggestMetrics');
 			var promise = new Promise(function(resolve, reject) {
-				console.log("Promise");
 				resolve(["Blabla", "Truc"]);
 			});
 			return promise;
 		};
 
 		BluefloodDatasource.prototype.performSuggestTenants = function(query) {
-			console.log('performSuggestTenants');
 			var promise = new Promise(function(resolve, reject) {
-				console.log("Promise");
 				resolve(["Yolo", "Swag"]);
 			});
 			return promise;
