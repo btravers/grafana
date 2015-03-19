@@ -33,66 +33,34 @@ function (angular, _, kbn) {
 			var targets = options.targets;
 			var points = options.maxDataPoints;
 
-			var promises = [];
-
+			var series = [];
 			angular.forEach(targets, function (target) {
 				if (target.tenant && target.metric && !target.hide) {
-					var options = {
-						method: 'GET',
-						url: '/v2.0/' + target.tenant + '/views/' + target.metric,
-						params: {
-							from: from,
-							to: to,
-							points: points
-						}
-					}
-					options.url = this.url + options.url;
-
-					promises.push($http(options).then(handleBluefloodQueryResponse));
+					series.push({
+						tenantId: target.tenant,
+						metricName: target.metric
+					});
 				}
 			}, this);
 
-			return $q.all(promises).then(function (responses) {
-				var series = [];
-				var count = 0;
-				for (var i = 0; i < targets.length; i++) {
-					if (!targets[i].tenant || !targets[i].metric) {
-						var target = targets[i].tenant + ':' + targets[i].metric;
-						series.push({ target: target, datapoints: [] });
-					} else if (!targets[i].hide) {
-						var target = targets[i].tenant + ':' + targets[i].metric;
-						series.push({ target: target, datapoints: responses[i-count] });
-					} else {
-						count++;
-					}
+			var options = {
+				method: 'POST',
+				url: '/stats' + target.tenant + '/views/' + target.metric,
+				data: {
+					from: from,
+					to: to,
+					maxDataPoints: points,
+					targets: series
 				}
+			}
+			options.url = this.url + options.url;
 
+			return $http(options).then(function (result) {
 				return {
-					data: series
-				};
+					data: result
+				}
 			});
 		};
-
-
-		/////////////////////////////////////////////////////////////////////////
-		/// Handle responses
-		/////////////////////////////////////////////////////////////////////////
-
-		function handleBluefloodQueryResponse (result) {
-			if (!result) {
-				return [];
-			}
-
-			var datapoints = [];
-
-			angular.forEach(result.data.values, function (value) {
-				var t = value.timestamp;
-				var v = value.average;
-				this.push([v, t]);
-			}, datapoints);
-
-			return datapoints;
-		}
 
 	
 		/////////////////////////////////////////////////////////////////////////
