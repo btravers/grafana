@@ -33,19 +33,18 @@ function (angular, _, kbn) {
 			var targets = options.targets;
 			var points = options.maxDataPoints;
 
-			var series = [];
-			angular.forEach(targets, function (target) {
-				if (target.tenant && target.metric && !target.hide) {
-					series.push({
-						tenantId: target.tenant,
-						metricName: target.metric
-					});
-				}
-			}, this);
+			var series = transformTargets(targets);
 
+			if (series.length == 0) {
+				return new Promise(function(resolve) {
+					resolve([]);
+				});
+			}
+
+			
 			var options = {
 				method: 'POST',
-				url: '/stats' + target.tenant + '/views/' + target.metric,
+				url: '/stats',
 				data: {
 					from: from,
 					to: to,
@@ -54,13 +53,108 @@ function (angular, _, kbn) {
 				}
 			}
 			options.url = this.url + options.url;
+			
 
 			return $http(options).then(function (result) {
-				return {
-					data: result
+				var data = [];
+				if (result != null) {
+					data = result.data;
 				}
+
+				return {
+					data: _.flatten(data)
+				};
 			});
 		};
+
+		function transformTargets(targets) {
+			var result = [];
+
+			for (var i=0; i<targets.length; i++) {
+				if (!targets[i].hide) {
+					var tmp = buildTargetQuery(targets[i], targets);
+					result = result.concat(tmp);
+				}
+			}
+
+			return result;
+		}
+
+		function buildTargetQuery(target, targets) {
+			var seriesRefLetters = [
+				'#A', '#B', '#C', '#D',
+				'#E', '#F', '#G', '#H',
+				'#I', '#J', '#K', '#L',
+				'#M', '#N', '#O', '#P',
+				'#Q', '#R', '#S', '#T',
+				'#U', '#V', '#W', '#X',
+				'#Y', '#Z'
+			];
+			
+			var result = [];
+
+			if (target.tenant && target.metric) {
+				var metric = {
+					tenantId: target.tenant,
+					metricName: target.metric
+				};
+				if (target.functions && target.functions.length != 0) {
+					for (var i=0; i<target.functions.length; i++) {
+						var params = [];
+						params.push(metric);
+
+						for (var j=0; j<target.functions[i].params.length; j++) {
+							var regex = /(\#[A-Z])/g;
+							var match = regex.exec(target.functions[i].params[j]);
+							if (match) {
+								var rg = seriesRefLetters.indexOf(match[0]);
+								if (rg < targets.length && rg>=0) {
+									var paramQuery = buildTargetQuery(targets[rg], targets);
+									params = params.concat(paramQuery);
+								}
+							} else {
+								params.push(target.functions[i].params[j]);
+							}
+						}
+
+						result.push({
+							name: target.functions[i].def.shortName,
+							parameters: params
+						});
+					}
+
+				} else {
+					result.push(metric);
+				}
+			} else if (target.functions && target.functions.length != 0) {
+				for (var i=0; i<target.functions.length; i++) {
+					var params = [];
+
+					for (var j=0; j<target.functions[i].params.length; j++) {
+						var regex = /(\#[A-Z])/g;
+						var match = regex.exec(target.functions[i].params[j]);
+						console.log(match);
+						if (match) {
+							var rg = seriesRefLetters.indexOf(match[0]);
+							if (rg < targets.length && rg>=0) {
+								var paramQuery = buildTargetQuery(targets[rg], targets);
+								params = params.concat(paramQuery);
+							}
+						} else {
+							params.push(target.functions[i].params[j]);
+						}
+					}
+
+					result.push({
+						name: target.functions[i].def.shortName,
+						parameters: params
+					});
+				}
+			} 
+
+			return result;
+			
+		}
 
 	
 		/////////////////////////////////////////////////////////////////////////
@@ -95,21 +189,6 @@ function (angular, _, kbn) {
 
 			return date.getTime();
 		}
-
-
-		/////////////////////////////////////////////////////////////////////////
-		/// Aggregation
-		/////////////////////////////////////////////////////////////////////////
-
-		BluefloodDatasource.prototype._seriesRefLetters = [
-			'#A', '#B', '#C', '#D',
-			'#E', '#F', '#G', '#H',
-			'#I', '#J', '#K', '#L',
-			'#M', '#N', '#O', '#P',
-			'#Q', '#R', '#S', '#T',
-			'#U', '#V', '#W', '#X',
-			'#Y', '#Z'
-		];
 
 		/////////////////////////////////////////////////////////////////////////
 
