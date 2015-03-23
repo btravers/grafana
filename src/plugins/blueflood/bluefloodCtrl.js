@@ -122,11 +122,11 @@ function (angular, _, kbn, gfunc) {
 		function validateTarget(target) {
 			var errs = {};
 
-			if (!target.metric) {
+			if (!target.metric && (!target.functions || target.functions.length == 0)) {
 				errs.metric = "You must supply a metric name.";
 			}
 
-			if (!target.tenant) {
+			if (!target.tenant && (!target.functions || target.functions.length == 0)) {
 				errs.tenant = "You must supply a tenant name.";
 			}
 
