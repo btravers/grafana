@@ -90,7 +90,6 @@ function (angular, _, kbn) {
 				'#U', '#V', '#W', '#X',
 				'#Y', '#Z'
 			];
-			
 			var result = [];
 
 			if (target.tenant && target.metric) {
@@ -113,7 +112,9 @@ function (angular, _, kbn) {
 									params = params.concat(paramQuery);
 								}
 							} else {
-								params.push(target.functions[i].params[j]);
+								params.push({
+									constantParam: target.functions[i].params[j]
+								});
 							}
 						}
 
@@ -133,7 +134,6 @@ function (angular, _, kbn) {
 					for (var j=0; j<target.functions[i].params.length; j++) {
 						var regex = /(\#[A-Z])/g;
 						var match = regex.exec(target.functions[i].params[j]);
-						console.log(match);
 						if (match) {
 							var rg = seriesRefLetters.indexOf(match[0]);
 							if (rg < targets.length && rg>=0) {
@@ -141,7 +141,9 @@ function (angular, _, kbn) {
 								params = params.concat(paramQuery);
 							}
 						} else {
-							params.push(target.functions[i].params[j]);
+							params.push({
+								constantParam: target.functions[i].params[j]
+							});
 						}
 					}
 

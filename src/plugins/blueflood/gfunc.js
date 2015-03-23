@@ -56,6 +56,22 @@ function (_, $) {
     category: categories.Transform,
   });
 
+  addFuncDef({
+    name: 'nonNegativeDerivative',
+    shortName: "nonNegativeDerivative",
+    category: categories.Transform,
+    params: [{ name: "max value or 0", type: 'int', optional: true }],
+    defaultParams: ['']
+  });
+
+  addFuncDef({
+    name: 'asPercent',
+    shortName: "asPercent",
+    category: categories.Calculate,
+    params: optionalSeriesRefArgs,
+    defaultParams: ['#A'],
+  });
+
 
   _.each(categories, function(funcList, catName) {
     categories[catName] = _.sortBy(funcList, 'name');
