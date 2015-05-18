@@ -113,13 +113,13 @@ function (angular, _, kbn) {
 								}
 							} else {
 								params.push({
-									constantParam: target.functions[i].params[j]
+									constant: target.functions[i].params[j]
 								});
 							}
 						}
 
 						result.push({
-							name: target.functions[i].def.shortName,
+							'function': target.functions[i].def.shortName,
 							parameters: params
 						});
 					}
@@ -142,13 +142,13 @@ function (angular, _, kbn) {
 							}
 						} else {
 							params.push({
-								constantParam: target.functions[i].params[j]
+								constant: target.functions[i].params[j]
 							});
 						}
 					}
 
 					result.push({
-						name: target.functions[i].def.shortName,
+						'function': target.functions[i].def.shortName,
 						parameters: params
 					});
 				}
