@@ -92,44 +92,21 @@ function (angular, _, kbn) {
 			];
 			var result = [];
 
+			var serie = null;
 			if (target.tenant && target.metric) {
-				var metric = {
+				serie = {
 					tenantId: target.tenant,
 					metricName: target.metric
 				};
-				if (target.functions && target.functions.length != 0) {
-					for (var i=0; i<target.functions.length; i++) {
-						var params = [];
-						params.push(metric);
+			}
 
-						for (var j=0; j<target.functions[i].params.length; j++) {
-							var regex = /(\#[A-Z])/g;
-							var match = regex.exec(target.functions[i].params[j]);
-							if (match) {
-								var rg = seriesRefLetters.indexOf(match[0]);
-								if (rg < targets.length && rg>=0) {
-									var paramQuery = buildTargetQuery(targets[rg], targets);
-									params = params.concat(paramQuery);
-								}
-							} else {
-								params.push({
-									constant: target.functions[i].params[j]
-								});
-							}
-						}
+			if (target.functions && target.functions.length != 0) {
 
-						result.push({
-							'function': target.functions[i].def.shortName,
-							parameters: params
-						});
-					}
-
-				} else {
-					result.push(metric);
-				}
-			} else if (target.functions && target.functions.length != 0) {
 				for (var i=0; i<target.functions.length; i++) {
 					var params = [];
+					if (serie != null) {
+						params.push(serie);
+					}
 
 					for (var j=0; j<target.functions[i].params.length; j++) {
 						var regex = /(\#[A-Z])/g;
@@ -147,13 +124,15 @@ function (angular, _, kbn) {
 						}
 					}
 
-					result.push({
+					serie = {
 						'function': target.functions[i].def.shortName,
 						parameters: params
-					});
+					};
 				}
-			} 
-
+			}
+				
+			result.push(serie);
+			
 			return result;
 			
 		}
